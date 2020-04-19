@@ -39,11 +39,11 @@ class Klingel(CMULTI):
 
 test = Klingel('CC','Kg',comPort="mqtt")
 print( test.getCompilationDate() )
-print( test.setSecurityKey("D=&27ane%24dez") )
+print( test.setSecurityKey(secrets.SECURITY_LEVEL_DEVELOPMENT_KEY) )
 print( test.getCompilationDate() )
 print( test.getCompilationTime() )
 print( test.getFreeMemory() )
-#print( test.prepareBootload("#34&dkjgdl23") )
+#print( test.prepareBootload(secrets.BOOTLOADER_ATTENTION_KEY) )
 #print( test.startBootload() )
 test.klingeln(0)
 #test.pirTrigger()
