@@ -27,7 +27,7 @@ import serial
 class CMULTI(object):
   def __init__(self,source,comPort="", baudRate=57600, backChannel="Klima", withCrc = True, timeout=1000):
     if comPort.lower() != "mqtt":
-      self.interface = serial.Serial(comPort, baudRate, timeout=3)
+      self.interface = serial.Serial(comPort, baudRate, timeout=timeout)
     else:
       self.interface = "mqtt"
 
