@@ -3,6 +3,7 @@ import paho.mqtt.publish as publish
 import paho.mqtt.subscribe as subscribe
 import yaml
 import serial
+import os
 
 
 class cmulti_crc_constants_t(object):
@@ -165,3 +166,32 @@ class CMULTI(object):
     def close(self):
         if type(self.interface) != str:
             self.interface.close()
+    
+    def getFreeMemory(self):
+      return self.sendCommand(self.target, "S", "0", "m")
+      
+    def getCompilationDate(self):
+      return self.sendCommand(self.target, "S", "0", "C")
+      
+    def getCompilationTime(self):
+      return self.sendCommand(self.target, "S", "0", "T")
+
+    def setSecurityKey(self, key):
+      return self.sendCommand(self.target, "S", "0", "K", parameter=key)
+
+    def prepareBootload(self, key):
+      return self.sendCommand(self.target, "S", "0", "A", parameter=key)
+
+    def startBootload(self):
+      return self.sendCommand(self.target, "S", "0", "B")
+
+    def setBeSilent(self, silent):
+      return self.sendCommand(self.target, "S", "0", "S", parameter=str(int(silent)))
+
+    def doReset(self):
+      return self.sendCommand(self.target, "S", "0", "R")
+    
+    def writeFlash(self, flashFile, µProcessor):
+      os.system(
+          "avrdude -e -c avr109 -p "+µProcessor+" -P " + self.comPort +
+          " -b 57600 -U flash:w:"+flashFile+":i")
