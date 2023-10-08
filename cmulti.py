@@ -1,26 +1,9 @@
-from PyCRC.CRCCCITT import CRCCCITT
+from crc import Calculator, Crc16
 import paho.mqtt.publish as publish
 import paho.mqtt.subscribe as subscribe
 import yaml
 import serial
 import os
-
-
-class cmulti_crc_constants_t(object):
-    noCRC = 0
-    CRC_8 = 1
-    CRC_16 = 2
-    CRC_32 = 3
-    CRC_ccitt_1d0f = 4
-    CRC_ccitt_ffff = 5
-    CRC_dnp = 6
-    CRC_kermit = 7
-    CRC_modbus = 8
-    CRC_sick = 9
-    CRC_xmodem = 10
-
-    def __init__(self):
-        pass
 
 
 class CMULTI(object):
@@ -36,10 +19,9 @@ class CMULTI(object):
 
             self.auth = {'username': self.dataMap["mqtt"]["user"], 'password': self.dataMap["mqtt"]["password"]}
 
-        if withCrc is True:
-            self.crc = cmulti_crc_constants_t.CRC_xmodem
-        else:
-            self.crc = cmulti_crc_constants_t.noCRC
+        self.withCrc = withCrc
+        if self.withCrc:
+            self.calculator = Calculator(Crc16.CCITT)
         self.source = source
         self.backChannel = backChannel
         self.timeout = timeout
@@ -62,9 +44,9 @@ class CMULTI(object):
             st = st + '<'
         l = len(st) + 6
         st = "#%02x" % l + st
-        crcString = ("%04x" % (CRCCCITT().calculate(st)))
+        # crcString = ("%04x" % (CRCCCITT().calculate(st)))
+        crcString = ("%04x" % self.calculator.checksum(st.encode("utf-8")))
         st = st + crcString + "\r\n"
-        print(st)
         self.outputTTY(st)
         if expectAnswer:
             result, resultBool, resultCRC, inTime = self.input()
@@ -87,10 +69,10 @@ class CMULTI(object):
             return msg.payload.decode('utf-8'), ret
 
     def sendCommand(self, target, function, address, job, parameter="", expectAnswer=True):
-        if len(parameter) == 0:
-            return self.sendStandard(parameter, target, function, address, job, "?", expectAnswer)
-        else:
+        if len(parameter) != 0:
             return self.sendStandard(parameter, target, function, address, job, "T", expectAnswer)
+        else:
+            return self.sendStandard(parameter, target, function, address, job, "?", expectAnswer)
 
     def outputTTY(self, text):
         towrite = text
@@ -130,34 +112,33 @@ class CMULTI(object):
     def input(self):
         inTime = True
         hello = self._readline().decode('utf-8')
+        hello = hello.strip()
         if len(hello) == 0:
             return "", False, False, False
         crcState = True
         crcString = ""
-        if hello[0] != '<':
-            print("!! start character error")
-        if hello[-1] != '>':
-            print("!! end character error")
-        if self.crc != cmulti_crc_constants_t.noCRC:
-            crcString = hello[-5:-1]
-            signString = hello[-6:-5]
-            answerString = hello[1:-5]
-            if crcString == ("%04x" % (CRCCCITT().calculate(answerString))):
+        if hello[0] != '#':
+            print("!! start character error:" + hello[0])
+        signChar = hello[8]
+        if self.withCrc:
+            crcString = hello[-4:]
+            answerString = hello[0:-4]
+            # if crcString == ("%04x" % (CRCCCITT().calculate(answerString))):
+            calcCrc = ("%04x" % self.calculator.checksum(answerString.encode("utf-8")))
+            if crcString == calcCrc:
                 crcState = True
             else:
                 crcState = False
-                print("!! CRC error")
+                print("!! CRC error:"+crcString+':'+calcCrc)
             answerString = answerString[0:-1]  # das sign abtrennen
         else:
             answerString = hello[1:-2]
             signString = hello[-2:-1]
-        if signString == '.':
-            return answerString, True, crcState, inTime
-        elif signString == '!':
+
+        if signChar == 'r':
             return answerString, False, crcState, inTime
         else:
-            print("!! sign character error")
-            return answerString, False, crcState, inTime
+            return answerString, True, crcState, inTime
 
     def answer_handler(self, channel, data):
         self.msganswer = cmulti_answer_t.decode(data)
