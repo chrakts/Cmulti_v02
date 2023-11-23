@@ -7,6 +7,6 @@ while True:
     try:
         text = message.decode('utf-8')
     except:
-        text = message
+        text = message[1:].decode('utf-8')
     with open("test.txt", "a") as myfile:
         myfile.write(text)
