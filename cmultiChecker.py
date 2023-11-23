@@ -2,4 +2,8 @@ import cmulti
 
 cm = cmulti.CMULTI("CP", "/dev/ttyUSB0")
 
-print(cm._readline().decode('utf-8'))
+message = cm._readline()
+try:
+    print(message.decode('utf-8'))
+except:
+    print(message)
