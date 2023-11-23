@@ -8,6 +8,6 @@ while True:
     try:
         text = message.decode('utf-8')
     except:
-        text = message.decode('utf-8', "ignore")
+        text = "@" + message.decode('utf-8', "ignore")
     with open("test.txt", "a") as myfile:
-        myfile.write(text)
+        myfile.write(datetime.datetime.now()+": "+text)
