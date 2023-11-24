@@ -9,6 +9,6 @@ while True:
         text = message.decode('ascii', 'backslashreplace')
     except:
         text = message.decode('utf-8', "ignore").replace('^M', '\n\r') + "++++"
-    with open("test.txt", "a") as myfile:
+    with open("test.txt", "a", "utf-8") as myfile:
         myfile.write(text + ": " + datetime.datetime.now().ctime())
 
