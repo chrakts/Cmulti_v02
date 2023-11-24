@@ -3,6 +3,8 @@ import datetime
 import codecs
 
 cm = cmulti.CMULTI("CP", "/dev/ttyUSB0")
+message = cm._readline()
+message = cm._readline()
 
 while True:
     message = cm._readline()
