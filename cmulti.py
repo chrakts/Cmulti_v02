@@ -79,7 +79,7 @@ class CMULTI(object):
         self.interface.write(towrite.encode('ascii'))
 
     def _readline(self):
-        eol = b'\r'
+        eol = b'\n'   # war r
         leneol = len(eol)
         line = bytearray()
         while True:
