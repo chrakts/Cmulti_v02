@@ -3,7 +3,7 @@ import sys
 sys.path.append("/home/christof/Daten/Software/repositories")
 
 from Cmulti_v02.cmulti import CMULTI
-import Secrets.secrets as secrets
+import Secrets.mySecrets as secrets
 
 
 class Ventilsteuerung(CMULTI):
@@ -54,7 +54,7 @@ class Ventilsteuerung(CMULTI):
 if __name__ == "__main__":
     import time
 
-    test = Ventilsteuerung('CC', 'V2', comPort="/dev/RS485-1")
+    test = Ventilsteuerung('CC', 'V2', comPort="/dev/board-1")
     print(test.setSecurityKey(secrets.SECURITY_LEVEL_DEVELOPMENT_KEY))
     print(test.getCompilationTime())
     print(test.getCompilationDate())
