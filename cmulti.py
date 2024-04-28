@@ -4,6 +4,7 @@ import paho.mqtt.subscribe as subscribe
 import yaml
 import serial
 import os
+import time
 
 
 class CMULTI(object):
@@ -49,6 +50,7 @@ class CMULTI(object):
         st = st + crcString + "\r\n"
         self.outputTTY(st)
         if expectAnswer:
+            time.sleep(0.1)
             result, resultBool, resultCRC, inTime = self.input()
             return resultBool, result
 
