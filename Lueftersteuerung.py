@@ -3,8 +3,8 @@ import time
 sys.path.append("/home/christof/Daten/Software/repositories")
 
 
-from Cmulti_v02.cmulti import CMULTI
-import Secrets.secrets as secrets
+from cmulti import CMULTI
+import mySecrets as secrets
 
 
 class Lueftersteuerung(CMULTI):
