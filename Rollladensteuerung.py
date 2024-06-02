@@ -29,7 +29,10 @@ class Rollladensteuerung(CMULTI):
         return self.sendCommand(self.target, "V", chr(address + 48), "h")
 
     def setRolloPosition(self, address, position):
-        return self.sendCommand(self.target, "S", chr(address + 48), "S", parameter="%.2f" % position)
+        return self.sendCommand(self.target, "X", chr(address + 48), "S", parameter="%.4f" % position)
+
+    def setWurzelbrumf(self, address, position):
+        return self.sendCommand(self.target, "X", chr(address + 48), "X", parameter="%.4f" % position)
 
     def setFixPosition0(self, address, position):
         return self.sendCommand(self.target, "a", chr(address + 48), "S", parameter="%d" % position)
@@ -60,16 +63,17 @@ if __name__ == "__main__":
     import time
 
     test = Rollladensteuerung('CC', 'R0', comPort="/dev/RS485-1")
-    print(test.setSecurityKey(secrets.SECURITY_LEVEL_DEVELOPMENT_KEY))
-    print(test.getCompilationTime())
-    print(test.getCompilationDate())
-    print(test.setRolloPosition(1, 45.5))
-    print(test.setFixPosition0(1, 83))
-    print(test.setFixPosition1(1, 53))
-    print(test.setFixPosition2(1, 63))
-    print(test.setUptime(1, 4231))
-    print(test.setDowntime(1, 3331))
-    print(test.setToFixPos0(1))
+    #print(test.setSecurityKey(secrets.SECURITY_LEVEL_DEVELOPMENT_KEY))
+    #print(test.getCompilationTime())
+    #print(test.getCompilationDate())
+    print(test.setRolloPosition(
+        0, 45))
+    #print(test.setFixPosition0(0, 74))
+    #print(test.setFixPosition1(1, 53))
+    #print(test.setFixPosition2(1, 63))
+    #print(test.setUptime(1, 4231))
+    #print(test.setDowntime(1, 3331))
+    #print(test.setToFixPos0(1))
     #for v in range(0, 2):
     #    print(test.getHeaterSetStatus(v))
     time.sleep(0.5)
