@@ -1,4 +1,5 @@
 import sys
+import os
 sys.path.append("/home/christof/Daten/Software/repositories")
 from Cmulti_v02.cmulti import CMULTI
 import Secrets.mySecrets as secrets
@@ -58,22 +59,36 @@ class Rollladensteuerung(CMULTI):
     def setTimeBetweenSensors(self, repTime):
         return self.sendCommand(self.target, "R", "0", "S", parameter="%d" % repTime)
 
+    def setSecurityKey(self, key):
+        return self.sendCommand(self.target, "S", "0", "K", parameter=key)
+
+    def prepareBootload(self, key):
+        return self.sendCommand(self.target, "S", "0", "A", parameter=key)
+
+    def startBootload(self):
+        return self.sendCommand(self.target, "S", "0", "B")
+
+    def setBeSilent(self, silent):
+        return self.sendCommand(self.target, "S", "0", "S", parameter=str(int(silent)))
+
+    def doReset(self):
+        return self.sendCommand(self.target, "S", "0", "R")
+
+    def writeFlash(self, flashFile):
+        os.system(
+          "avrdude -e -c avr109 -p ATxmega32A4U -P " + self.comPort +
+          " -b 57600 -U flash:w:"+flashFile+":i") # avrdude -c avrispmkII -P usb  -p $(MCU) -v -Uflash:w:$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).hex:i
+
 
 if __name__ == "__main__":
     import time
 
     test = Rollladensteuerung('CC', 'R0', comPort="/dev/RS485-1")
-    #print(test.setSecurityKey(secrets.SECURITY_LEVEL_DEVELOPMENT_KEY))
-    #print(test.getCompilationTime())
-    #print(test.getCompilationDate())
-    print(test.setRolloPosition(
-        0, 45))
-    #print(test.setFixPosition0(0, 74))
-    #print(test.setFixPosition1(1, 53))
-    #print(test.setFixPosition2(1, 63))
-    #print(test.setUptime(1, 4231))
-    #print(test.setDowntime(1, 3331))
-    #print(test.setToFixPos0(1))
-    #for v in range(0, 2):
-    #    print(test.getHeaterSetStatus(v))
+    print("SetSecurity")
+    print(test.setSecurityKey(secrets.SECURITY_LEVEL_DEVELOPMENT_KEY))
     time.sleep(0.5)
+    print(test.prepareBootload("34&dkjg+dl23"))
+    time.sleep(0.5)
+    test.startBootload()
+    time.sleep(0.6)
+    test.writeFlash("/home/christof/Daten/Software/repositories/RollladenSteuerung/bin/Release/RollladenSteuerung.hex")
