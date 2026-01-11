@@ -51,9 +51,10 @@ if __name__ == "__main__":
 
     test = Powerring('HA', 'BR', comPort="/dev/RS485-1")
     
-    test.setGridPower(1500)
+    test.setGridPower(-1251)
     time.sleep(0.1)
-    test.setSolarPower(-500)
+    test.setSolarPower(1000)
     time.sleep(0.1)
-    test.setBatteriePower(500)
-    
+    test.setBatteriePower(-749)
+    time.sleep(0.1)
+    test.setBatterieStatus(64)
