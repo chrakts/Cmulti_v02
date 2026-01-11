@@ -1,0 +1,4 @@
+crc
+paho-mqtt
+PyYAML
+pyserial
