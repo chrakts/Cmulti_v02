@@ -22,7 +22,7 @@ class CMULTI(object):
 
         self.withCrc = withCrc
         if self.withCrc:
-            self.calculator = Calculator(Crc16.CCITT)
+            self.calculator = Calculator(Crc16.XMODEM)
         self.source = source
         self.backChannel = backChannel
         self.timeout = timeout
