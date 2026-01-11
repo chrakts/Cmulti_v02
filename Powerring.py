@@ -1,6 +1,6 @@
 import sys
 import os
-sys.path.append("/home/christof/Daten/Software/repositories")
+sys.path.append("./..")
 from Cmulti_v02.cmulti import CMULTI
 import Secrets.mySecrets as secrets
 
@@ -51,7 +51,9 @@ if __name__ == "__main__":
 
     test = Powerring('HA', 'BR', comPort="/dev/RS485-1")
     
-    test.setGridPower(5000)
-    test.setSolarPower(250)
-    test.setBatteriePower(0)
+    test.setGridPower(1500)
+    time.sleep(0.1)
+    test.setSolarPower(-500)
+    time.sleep(0.1)
+    test.setBatteriePower(500)
     
